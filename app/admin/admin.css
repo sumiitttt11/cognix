@@ -1,0 +1,334 @@
+/* ============================================================
+   Cognix — the administrator console.
+
+   styles.css is loaded first and this sheet does not fight it: the
+   colour tokens, .fld, .cbtn, .chk, .seg, .ubar, .aerr, .aok and
+   the crash card all come from there, so a field in the console is
+   the same field as a field in the app. Nothing here uses
+   !important, and nothing here redefines a token.
+
+   Two class names collide with the app's on purpose and are kept
+   apart by the element rather than by a longer name: .ktab is the
+   nav button (never a table — the table is .ktable), and .kwrap is
+   the page shell (never a cell — the wrapping cell is .kcell).
+
+   One column, always. A console that reflows its tables into
+   narrow side-by-side boxes is a console whose tables get read
+   with a horizontal scrollbar, and the widest thing on most of
+   these pages is an email address next to a date.
+   ============================================================ */
+
+  /* ---------- the page ----------
+     The app locks the body: it is a fixed window with its own panes
+     that scroll. This page is a document and scrolls normally,
+     which is the one thing it has to take back — and it takes it
+     back on <html> as well, because a body that is 100% tall with
+     overflow:auto is a second scroll container inside the first
+     one. Two scrollbars, and window.scrollTo moves the wrong one.
+     The class is on <html> in index.html precisely so this can be
+     said without a selector that reaches into the app's sheet. */
+  html.kdoc{height:auto}
+  html.kdoc body.kbody{height:auto;min-height:100%;overflow:visible;
+    background:var(--bg)}
+  .kwrap{min-height:100vh;display:flex;flex-direction:column}
+
+  /* ---------- the header ----------
+     Sticky, because the sign-out button and the name of the
+     account holding the console should not be something you
+     scroll back up to check. */
+  .khead{position:sticky;top:0;z-index:6;display:flex;align-items:center;
+    gap:10px;height:52px;padding:0 16px;background:var(--bg);
+    border-bottom:1px solid var(--line)}
+  .kbrand{display:flex;align-items:center;gap:8px;color:var(--tx);
+    text-decoration:none;min-width:0}
+  .kbrand b{font-size:14px;font-weight:650;letter-spacing:-.2px}
+  .kbrand .kdim{font-size:11px}
+  .kbrand:hover b{color:var(--acc)}
+  .ksp{flex:1;min-width:0}
+  .kme{display:flex;flex-direction:column;align-items:flex-end;min-width:0;
+    margin-right:2px;line-height:1.3}
+  .kme b{font-size:12.5px;font-weight:600;max-width:220px;overflow:hidden;
+    white-space:nowrap;text-overflow:ellipsis}
+  .kme small{font-size:10.5px;color:var(--mut2)}
+  .khead .cbtn{padding:6px 11px;font-size:11.5px;border-radius:7px;
+    text-decoration:none;white-space:nowrap}
+
+  /* ---------- the six places to be ----------
+     Sticky under the header and scrollable sideways on a phone, so
+     the last tab is reachable without the nav wrapping into two
+     rows and moving everything below it. The offset is the header's
+     own height, which is why that height is fixed rather than
+     whatever its buttons happen to add up to. */
+  .knav{position:sticky;top:52px;z-index:5;display:flex;gap:2px;
+    padding:0 12px;background:var(--bg);border-bottom:1px solid var(--line);
+    overflow-x:auto;scrollbar-width:none}
+  .knav::-webkit-scrollbar{height:0}
+  .ktab{padding:9px 11px 8px;font-size:12.5px;font-weight:600;color:var(--mut);
+    border-bottom:2px solid transparent;white-space:nowrap}
+  .ktab:hover{color:var(--tx)}
+  .ktab.on{color:var(--tx);border-bottom-color:var(--acc)}
+
+  .kmain{flex:1;width:100%;max-width:1180px;margin:0 auto;padding:16px 16px 26px}
+
+  .kfoot{display:flex;align-items:center;justify-content:center;gap:8px;
+    flex-wrap:wrap;padding:14px 16px 20px;font-size:11px;color:var(--mut2);
+    border-top:1px solid var(--line)}
+
+  /* a button that is a link: the console navigates by fragment, so
+     these cannot be <a href> without inventing URLs the server
+     would be asked for on a middle click */
+  .klink{padding:0;font:inherit;font-size:inherit;color:var(--acc);
+    text-align:left;max-width:100%;overflow:hidden;white-space:nowrap;
+    text-overflow:ellipsis}
+  .klink:hover{text-decoration:underline;text-underline-offset:2px}
+  .kfoot .klink{font-size:11px}
+
+  /* ---------- the stack of cards ---------- */
+  .kviews{display:flex;flex-direction:column;gap:14px}
+  .kcard{background:var(--bg2);border:1px solid var(--line);border-radius:12px}
+  .kchead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:11px 14px;border-bottom:1px solid var(--line)}
+  .kct{display:flex;flex-direction:column;min-width:0;flex:1;line-height:1.35}
+  .kct b{font-size:13px;font-weight:650;letter-spacing:-.1px}
+  .kct small{font-size:11px;color:var(--mut2)}
+  .kcbody{padding:14px}
+  .kcbody > .ubar{margin:12px 0 2px}
+
+  /* a table card lets its table reach the card's edges while the
+     sentences under it stay inset with everything else */
+  .kcard.wide .ktwrap{margin:-14px -14px 0;border-radius:0}
+  .kcard.wide .ktable th:first-child,
+  .kcard.wide .ktable td:first-child{padding-left:14px}
+  .kcard.wide .ktable th:last-child,
+  .kcard.wide .ktable td:last-child{padding-right:14px}
+
+  /* the line above a card: a back button, a span of explanation */
+  .kaside{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;
+    font-size:11.5px}
+  .kaside .cbtn{padding:6px 11px;font-size:11.5px;border-radius:7px}
+
+  /* the controls in a card's header: a search box, two selects,
+     Refresh. They shrink before the heading does. */
+  .kfilters{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .kfilters .fld{min-width:0}
+  .kfilters .fld:first-child{width:210px}
+  .kfilters .fld.sel{width:140px}
+  .kfilters .seg{width:260px;flex:none}
+  .kfilters .cbtn{padding:6px 10px;font-size:11.5px;border-radius:7px}
+
+  /* ---------- the figures ----------
+     Deliberately inset and darker than the card: a row of them
+     reads as a row of readings rather than as more of the page. */
+  .kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
+    gap:10px}
+  .kgrid.tight{grid-template-columns:repeat(auto-fit,minmax(104px,1fr));
+    gap:8px;margin-top:12px}
+  .kstat{display:flex;flex-direction:column;gap:3px;padding:10px 12px 11px;
+    border-radius:9px;background:var(--bg);border:1px solid var(--line);
+    min-width:0}
+  .klab{font-size:10px;font-weight:650;letter-spacing:.4px;text-transform:uppercase;
+    color:var(--mut2)}
+  .kval{font-size:19px;font-weight:600;letter-spacing:-.4px;line-height:1.15;
+    font-variant-numeric:tabular-nums;overflow:hidden;white-space:nowrap;
+    text-overflow:ellipsis}
+  .khint{font-size:10.5px;line-height:1.4;color:var(--mut2)}
+  .kgrid.tight .kval{font-size:15px}
+  /* one number in a different colour is how "3 failed today" gets
+     noticed; the border moves with it so the whole reading tints */
+  .kstat.warn{border-color:#4a3a24}
+  .kstat.warn .kval{color:#e0a458}
+  .kstat.bad{border-color:#4e2f2a}
+  .kstat.bad .kval{color:var(--bad)}
+
+  /* ---------- waiting, nothing, and broken ---------- */
+  .kskel{display:grid;gap:8px}
+  .kbar{display:block;height:30px;border-radius:8px;
+    background:linear-gradient(90deg,var(--bg3) 0%,#3a3632 50%,var(--bg3) 100%);
+    background-size:220% 100%;animation:kshim 1.15s linear infinite}
+  @keyframes kshim{from{background-position:120% 0}to{background-position:-120% 0}}
+  .kempty{margin:0;padding:18px 4px;text-align:center;font-size:12px;
+    line-height:1.6;color:var(--mut2)}
+  .kerr{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:11px 13px;border-radius:9px;background:#2a1e1c;
+    border:1px solid #4e2f2a;font-size:12px;line-height:1.55;color:#eda594}
+  .kerr .cbtn{padding:6px 11px;font-size:11.5px;border-radius:7px;flex:none}
+
+  /* ---------- the tables ----------
+     .ktable, not .ktab: the nav button above owns that name. The
+     wrapper is what scrolls, so a wide table never widens the page
+     and never hides a column off the right edge of the card. */
+  .ktwrap{overflow-x:auto;overflow-y:hidden}
+  .ktable{width:100%;border-collapse:collapse;font-size:12px}
+  .ktable th{padding:9px 10px;text-align:left;font-size:10px;font-weight:650;
+    letter-spacing:.4px;text-transform:uppercase;color:var(--mut2);
+    white-space:nowrap;background:var(--bg2);border-bottom:1px solid var(--line)}
+  .ktable td{padding:9px 10px;vertical-align:middle;
+    border-bottom:1px solid #2c2926}
+  .ktable tr:last-child td{border-bottom:0}
+  .ktable tbody tr.kclick{cursor:pointer}
+  .ktable tbody tr.kclick:hover{background:var(--bg3)}
+  /* the numeric and short columns, and the one that is allowed to wrap */
+  .ktable .kmid{text-align:left;white-space:nowrap}
+  .ktable .kright{text-align:right;white-space:nowrap;
+    font-variant-numeric:tabular-nums}
+  .ktable td.kcell{min-width:180px;max-width:420px;white-space:normal;
+    line-height:1.5;color:var(--mut)}
+
+  /* an address with a display name under it — the pair is one cell */
+  .kmail{display:flex;flex-direction:column;min-width:0;line-height:1.35}
+  .kmail b{font-weight:600;overflow:hidden;white-space:nowrap;
+    text-overflow:ellipsis;max-width:320px}
+  .kmail small{font-size:10.5px;color:var(--mut2);overflow:hidden;
+    white-space:nowrap;text-overflow:ellipsis;max-width:320px}
+  .kmail.big b{font-size:15px;font-weight:650;letter-spacing:-.2px;max-width:none}
+  .kmail.big small{font-size:11.5px}
+
+  .kdim{color:var(--mut2)}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:11px}
+  .ktag{display:inline-block;font-size:9.5px;font-weight:650;letter-spacing:.4px;
+    text-transform:uppercase;padding:2px 6px;border-radius:5px;
+    white-space:nowrap;background:var(--bg3);color:var(--mut)}
+  .ktag.acc{background:var(--accSoft);color:var(--acc)}
+  .ktag.warn{background:#2a2118;color:#e0a458}
+
+  /* ---------- the pager ---------- */
+  .kpage{display:flex;align-items:center;gap:8px;margin:12px 0 0;
+    font-size:11.5px;color:var(--mut2);font-variant-numeric:tabular-nums}
+  .kpage span{flex:1}
+  .kpage .cbtn{padding:5px 11px;font-size:11.5px;border-radius:7px}
+  .kpage .cbtn:disabled{opacity:.45;cursor:default}
+  .kpage .cbtn:disabled:hover{background:var(--bg3)}
+
+  /* ---------- the forms ----------
+     One label above one control, and the sentence under it is part
+     of the control: most of these change what an account can do, so
+     the explanation is not decoration. */
+  .kedit{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:14px}
+  .krow{display:flex;flex-direction:column;gap:5px;min-width:0}
+  .krow.wide{grid-column:1/-1}
+  .klab2{font-size:11px;font-weight:650;color:var(--tx)}
+  .kctl{display:block;min-width:0}
+  .kctl .fld{width:100%}
+  .kctl .fld.num{max-width:120px}
+  .khint2{margin:8px 0 0;font-size:11px;line-height:1.55;color:var(--mut2)}
+  .krow .khint2{margin:0}
+  /* a switch and the sentence that says what it is doing right now */
+  .kctlrow{display:flex;align-items:center;gap:9px;min-height:21px;font-size:11.5px}
+  .kwarn{color:#e0a458}
+
+  .kchecks{display:flex;flex-direction:column;gap:8px}
+  .kcheck{display:flex;align-items:center;gap:10px;padding:9px 11px;
+    border-radius:9px;background:var(--bg);border:1px solid var(--line);
+    cursor:pointer}
+  .kcheck > span{display:flex;flex-direction:column;min-width:0;flex:1;
+    line-height:1.35}
+  /* the row for a model this build does not know leads with a tag rather than
+     a switch, and a tag is a span too — without this it takes the growth meant
+     for the label beside it and draws as a wide empty box */
+  .kcheck > span.ktag{flex:none;flex-direction:row}
+  .kcheck b{font-size:12px;font-weight:600}
+  .kcheck small{font-size:10.5px;color:var(--mut2)}
+  .kcheck .cbtn{padding:5px 10px;font-size:11px;border-radius:7px;flex:none}
+
+  /* the invitation form is one line until it is not */
+  .kform{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .kform .fld{flex:1;min-width:200px}
+  .kform .cbtn{padding:7px 12px;font-size:12px;border-radius:7px}
+
+  /* ---------- the ids a gateway says it serves ----------
+     Offered under the field they would go in, because the whole
+     reason for asking a gateway for its list is that nobody should
+     have to type one of these from memory. Small, monospaced and
+     wrapping: some gateways serve two of them and some serve fifty,
+     and either way they are values to be recognised rather than
+     read. */
+  .kpick{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:3px 0 0}
+  .kpick .cbtn{padding:4px 8px;font-size:10.5px;border-radius:6px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .kpick .cbtn.on{background:var(--accSoft);color:var(--acc)}
+  .kpick > span{font-size:10.5px;color:var(--mut2)}
+
+  /* the buttons at the bottom of a card, and the rule above the one
+     row of buttons that cannot be undone */
+  .kacts{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .kedit .kacts{grid-column:1/-1;margin-top:2px}
+  .kacts .cbtn{padding:7px 12px;font-size:12px;border-radius:7px}
+  .kacts .cbtn:disabled{opacity:.5;cursor:default}
+  .kacts .cbtn:disabled:hover{background:var(--bg3)}
+  .kacts .cbtn.dang:disabled:hover{background:var(--bad)}
+  .kacts .fld{flex:1;min-width:190px;max-width:320px}
+  .ksep{height:1px;background:var(--line);margin:14px 0}
+
+  /* typing the address is the guard, so the box and the sentence
+     that explains why sit inside the same red frame */
+  .kdanger{padding:12px 13px;border-radius:10px;background:#2a1e1c;
+    border:1px solid #4e2f2a}
+  .kdanger p{margin:0 0 10px;font-size:11.5px;line-height:1.6;color:#eda594}
+  .kdanger p b{color:#f3bcae}
+  .kdanger .mono{color:#f3bcae}
+
+  /* ---------- one account ---------- */
+  .kwho{display:flex;align-items:center;gap:9px;flex-wrap:wrap;min-width:0}
+  .kwho .kmail{flex:1;min-width:180px}
+  /* what the authentication service says, as pairs */
+  .kfacts{display:grid;grid-template-columns:minmax(120px,max-content) 1fr;
+    gap:7px 14px;margin:0;font-size:12px}
+  .kfacts dt{font-size:11px;color:var(--mut2)}
+  .kfacts dd{margin:0;min-width:0;overflow-wrap:anywhere}
+
+  /* ---------- the chart ----------
+     Divs, one per day, scaled to the busiest day. Bars shrink to fit
+     a year in the same box rather than scrolling: 365 of them is a
+     shape to read, not 365 values to compare one by one. */
+  .kchart{display:flex;align-items:flex-end;gap:2px;height:132px;margin:14px 0 0;
+    padding:8px 2px 0;border-bottom:1px solid var(--line)}
+  .kbarwrap{flex:1;min-width:2px;height:100%;display:flex;align-items:flex-end;
+    border-radius:3px}
+  .kbarwrap:hover{background:var(--bg3)}
+  .kbarv{display:block;width:100%;min-height:2px;border-radius:3px 3px 0 0;
+    background:var(--acc);opacity:.85}
+  .kbarwrap:hover .kbarv{opacity:1}
+  .kbarv.bad{background:var(--bad)}
+
+  /* ---------- the two pages that are not the console ----------
+     No database on this instance, and signed in but not an
+     administrator. Both are one card in the middle of the page, and
+     both are a plain <div class="kcard"> — the views build theirs
+     with the Card component, which is a <section>, so this centres
+     those two and nothing else. */
+  .kh1{margin:0 0 10px;font-size:17px;font-weight:600;letter-spacing:-.2px}
+  .kp{margin:0 0 10px;font-size:12.5px;line-height:1.65;color:var(--mut)}
+  .kmain > div.kcard{max-width:620px;margin:24px auto 0}
+  .kmain > div.kcard .cbtn{margin-top:4px;display:inline-block;
+    text-decoration:none}
+
+  /* ---------- narrow ----------
+     A phone is a real way to read this: an administrator checking
+     whether anything failed does it from wherever they are. The
+     tables keep their columns and scroll sideways; everything that
+     is not a table stacks. */
+  @media (max-width:720px){
+    .khead{gap:8px;height:48px;padding:0 12px}
+    .khead .kme{display:none}
+    .knav{top:48px}
+    .kmain{padding:12px 12px 22px}
+    .kgrid{grid-template-columns:repeat(auto-fit,minmax(132px,1fr))}
+    .kedit{grid-template-columns:1fr}
+    .kfilters{width:100%}
+    .kfilters .fld:first-child,
+    .kfilters .fld.sel,
+    .kfilters .seg{width:100%;flex:1 1 100%}
+    .kchead{padding:10px 12px}
+    .kcbody{padding:12px}
+    .kcard.wide .ktwrap{margin:-12px -12px 0}
+    .kcard.wide .ktable th:first-child,
+    .kcard.wide .ktable td:first-child{padding-left:12px}
+    .kcard.wide .ktable th:last-child,
+    .kcard.wide .ktable td:last-child{padding-right:12px}
+    .kfacts{grid-template-columns:1fr;gap:2px 0}
+    .kfacts dd{margin-bottom:8px}
+    .kmail b,.kmail small{max-width:210px}
+  }

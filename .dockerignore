@@ -1,0 +1,49 @@
+# =====================================================================
+# What never goes into the image.
+#
+# The first entry is the one that matters: .env holds the gateway key and,
+# once Supabase is connected, the service_role key as well. A container image
+# is a tarball anybody with pull access can unpack, so a key baked into one
+# is a key that has left the building. The Dockerfile also copies by name
+# rather than `COPY . .`, and tests/test_deploy.py asserts both halves.
+# =====================================================================
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# History and tooling — large, and none of it runs in production.
+.git
+.gitignore
+.github
+.vscode
+.idea
+
+# Python leftovers. Bytecode compiled on another machine is at best useless
+# and at worst a stale copy of a file that has since changed.
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# The suite runs in CI and on a laptop, against the source tree. It is not
+# part of the running server, and tools/fake_supabase.py is a stand-in for a
+# service that is real in production — neither belongs in a deployed image.
+tests/
+tools/
+
+# The SQL and its instructions are run by a person against Supabase's own SQL
+# editor, once. The server never reads them.
+supabase/
+
+# Notes, not code.
+deploy/
+README.md
+*.md
+*.docx
+*.log
+tmp/
+Thumbs.db
+desktop.ini
+.DS_Store

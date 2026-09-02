@@ -1,0 +1,26 @@
+# The API key lives here and nowhere else.
+.env
+.env.local
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Editors and OS
+.vscode/
+.idea/
+.claude/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and scratch
+*.log
+tmp/
+
+# tools/sql.py output: the four supabase/*.sql files concatenated, so it is a
+# copy of files that are already here.
+setup.sql

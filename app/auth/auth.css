@@ -1,0 +1,87 @@
+/* ============================================================
+   Cognix — the sign-in page.
+
+   The app sheet is loaded first, so the colour tokens, the field
+   and button rules and the error/ok lines all come from there and
+   the two pages cannot drift apart. This file adds the page: one
+   card in the middle of the window, and the parts a form needs
+   that the app itself never has to draw.
+   ============================================================ */
+
+/* the app sheet locks the window because the canvas scrolls itself. A card
+   taller than a short laptop window has to be reachable, so this page scrolls. */
+body.authbody{overflow:auto}
+
+.authwrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:14px;padding:32px 18px 40px}
+.authcard{width:min(392px,100%);display:flex;flex-direction:column;gap:11px;
+  padding:22px 24px 20px;border-radius:16px;background:var(--bg2);
+  border:1px solid var(--line);box-shadow:0 22px 60px #0007}
+
+/* ---------- the mark and the line under it ---------- */
+.authtop{display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:2px 0 6px;text-align:center}
+.authtop .amark{display:block;border-radius:9px}
+.authtop b{font-size:15.5px;font-weight:650;letter-spacing:-.2px}
+.authtop small{font-size:12px;color:var(--mut)}
+
+/* ---------- sign in / create account ---------- */
+.authtabs{display:flex;background:var(--bg);border-radius:9px;padding:3px;gap:3px;
+  margin-bottom:3px}
+.atab{flex:1;padding:7px 4px;border-radius:6px;font-size:12px;font-weight:600;
+  color:var(--mut2)}
+.atab:hover{color:var(--tx)}
+.atab.on{background:var(--bg3);color:var(--tx);box-shadow:0 1px 2px #0005}
+
+/* ---------- the form ---------- */
+.aform{display:flex;flex-direction:column;gap:7px}
+.authcard .ah2{margin:0;font-size:14.5px;font-weight:650;letter-spacing:-.1px;
+  color:var(--tx)}
+.authcard .ap{margin:0 0 3px;font-size:12.5px;line-height:1.6;color:var(--mut)}
+.authcard .alab{font-size:11px;font-weight:650;letter-spacing:.3px;
+  text-transform:uppercase;color:var(--mut2);margin-top:4px}
+.authcard .ahint{margin:1px 0 2px;font-size:11.5px;line-height:1.55;color:var(--mut2)}
+.alabrow{display:flex;align-items:baseline;gap:8px;margin-top:4px}
+.alabrow .alab{flex:1;margin-top:0}
+
+/* the app's fields are 11.5px because there are forty of them in one panel.
+   Here there are two, and a password box that small is a typo waiting. */
+.authcard .fld{padding:7px 9px;border-radius:9px;background:var(--bg)}
+.authcard .fld:hover{border-color:var(--line)}
+.authcard .fld input{font-size:13px;line-height:1.4}
+.authcard .fld.wrong{border-color:var(--bad)}
+
+.aeye{width:24px;height:22px;border-radius:5px;display:grid;place-items:center;
+  color:var(--mut2);flex:none}
+.aeye:hover{background:var(--bg3);color:var(--tx)}
+.aeye svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.6;fill:none;
+  stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- buttons ---------- */
+.cbtn.wide{width:100%;margin-top:9px;padding:10px 14px;border-radius:9px;
+  font-size:13px;font-weight:600;display:inline-flex;align-items:center;
+  justify-content:center;text-decoration:none}
+.cbtn.wide:disabled{opacity:.6;cursor:default}
+.atiny{padding:0;font-size:11.5px;color:var(--mut);text-decoration:underline;
+  text-decoration-color:#5a544f;text-underline-offset:2px}
+.atiny:hover{color:var(--tx)}
+.atiny:disabled{opacity:.6;cursor:default}
+.atiny.mid{align-self:center;margin-top:9px}
+
+/* ---------- the strip and the waiting bar ---------- */
+.authcard .ann{border-radius:9px;border:1px solid var(--line);font-size:11.5px;
+  line-height:1.55;padding:8px 10px}
+.abar{height:3px;border-radius:3px;background:var(--bg3);overflow:hidden;
+  margin:10px 0 2px}
+.abar i{display:block;height:100%;width:40%;border-radius:3px;background:var(--acc);
+  animation:aslide 1.1s ease-in-out infinite}
+@keyframes aslide{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}
+
+.authcard .aerr,.authcard .aok{margin:2px 0 0;font-size:12px}
+.authfoot{width:min(392px,100%);margin:0;text-align:center;font-size:11.5px;
+  line-height:1.6;color:var(--mut2)}
+
+@media (max-width:420px){
+  .authwrap{padding:20px 12px 28px;justify-content:flex-start}
+  .authcard{padding:18px 16px 16px;border-radius:14px}
+}

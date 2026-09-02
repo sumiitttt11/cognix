@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cognix self-test</title>
+<!-- Same closed policy as the app: this page has to run under the real one,
+     or it would be testing something the app never does. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none';
+  script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self';
+  connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="same-origin">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/cognix-mark-64.png">
+<link rel="stylesheet" href="./selftest.css">
+</head>
+<body>
+<h1>Cognix self-test</h1>
+<p class="sub">The pure modules, run in the browser that has to run them:
+  <code>util.js</code>, <code>sanitize.js</code>, <code>tokens.js</code>,
+  <code>model.js</code>. Nothing here imports <code>store.js</code>, so your saved
+  maps are not touched and nothing is sent anywhere.</p>
+<div id="sum" class="sum">running…</div>
+<div id="out"></div>
+<noscript><p class="bad">This page is the JavaScript. Turn it on.</p></noscript>
+<script type="module" src="./unit.js"></script>
+</body>
+</html>

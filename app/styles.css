@@ -1,0 +1,702 @@
+/* ============================================================
+   Cognix — base sheet, carried over from the HTML prototype
+   so the React build looks identical. New rules live in the
+   "react additions" and "COGNIX" blocks at the bottom.
+   ============================================================ */
+  :root{
+    --bg:#1c1b1a; --bg2:#242220; --bg3:#2e2b29; --line:#35322f;
+    --tx:#eae7e3; --mut:#9d9791; --mut2:#6f6a66;
+    --acc:#d97757; --accSoft:#3a2a23;
+    --paper:#fff; --ink:#1f1e1d; --pmut:#6b6660; --pline:#e7e4e0; --psoft:#faf9f8;
+    --ok:#4ea172; --bad:#d16b5e; --link:#3b7dd8;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--tx);overflow:hidden;
+    font:13px/1.5 "Inter",-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  button,input,select,textarea{font:inherit;color:inherit}
+  button{background:transparent;border:0;cursor:pointer}
+  ::selection{background:#d9775744}
+
+  /* ---------- window chrome ---------- */
+  .app{height:100vh;display:grid;grid-template-rows:38px minmax(0,1fr)}
+  .titlebar{display:flex;align-items:center;padding:0 6px 0 10px;background:var(--bg);
+    -webkit-app-region:drag;user-select:none}
+  .tbtn{width:28px;height:26px;border-radius:6px;display:grid;place-items:center;color:var(--mut)}
+  .tbtn:hover{background:var(--bg3);color:var(--tx)}
+  .tbtn svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.7;fill:none;
+    stroke-linecap:round;stroke-linejoin:round}
+  .tbgap{width:6px}
+  .tbspace{flex:1}
+  .wbtn{width:40px;height:30px;display:grid;place-items:center;color:var(--mut);border-radius:4px}
+  .wbtn:hover{background:var(--bg3);color:var(--tx)}
+  .wbtn.x:hover{background:#c4342b;color:#fff}
+  .wbtn svg{width:12px;height:12px;stroke:currentColor;stroke-width:1.5;fill:none}
+
+  /* ---------- shell ---------- */
+  .shell{display:grid;grid-template-columns:206px minmax(0,1fr);min-height:0}
+  .shell.nosid{grid-template-columns:0 minmax(0,1fr)}
+  .shell.showinsp{grid-template-columns:206px minmax(0,1fr) 268px}
+  .shell.nosid.showinsp{grid-template-columns:0 minmax(0,1fr) 268px}
+  /* the tap-away behind the tray drawer. There is no drawer above 760px, so
+     there is nothing for it to cover and it is not drawn. */
+  .scrim{display:none}
+  /* ---------- left tray ---------- */
+  .side{background:var(--bg);display:flex;flex-direction:column;min-height:0;overflow:hidden}
+  .tabs{display:flex;gap:4px;padding:2px 8px 8px}
+  .tab{display:flex;align-items:center;gap:6px;padding:6px 11px;border-radius:8px;
+    font-size:12.5px;font-weight:600;color:var(--mut)}
+  .tab:hover{color:var(--tx)}
+  .tab.on{background:var(--bg3);color:var(--tx)}
+  .tab svg{width:13px;height:13px;stroke:currentColor;stroke-width:1.8;fill:none;
+    stroke-linecap:round;stroke-linejoin:round}
+  .srow{display:flex;align-items:center;gap:9px;width:100%;padding:6px 12px;
+    font-size:12.5px;color:var(--tx);text-align:left}
+  .srow:hover{background:var(--bg2)}
+  .srow .si{width:15px;display:grid;place-items:center;color:var(--mut)}
+  .srow .si svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.7;fill:none;
+    stroke-linecap:round;stroke-linejoin:round}
+  .srow.on .si{color:var(--acc)}
+  .srow kbd{margin-left:auto;font:inherit;font-size:10px;color:var(--mut2)}
+  .scroll{flex:1;overflow:auto;min-height:0;padding-top:10px}
+  .scroll::-webkit-scrollbar{width:9px}
+  .scroll::-webkit-scrollbar-thumb{background:#3d3936;border-radius:9px;border:3px solid var(--bg)}
+  .ghead{display:flex;align-items:center;gap:6px;padding:7px 12px 5px;
+    font-size:11.5px;font-weight:700;color:var(--mut)}
+  .ghead .gsp{flex:1}
+  .gact{width:19px;height:19px;border-radius:5px;display:grid;place-items:center;color:var(--mut2)}
+  .gact:hover{background:var(--bg3);color:var(--tx)}
+  .gact svg{width:12px;height:12px;stroke:currentColor;stroke-width:1.8;fill:none;
+    stroke-linecap:round;stroke-linejoin:round}
+  .item{display:flex;align-items:center;gap:9px;width:100%;padding:5px 12px;
+    font-size:12.5px;color:var(--mut);text-align:left}
+  /* the row is a container; this is the part that opens the chat */
+  .item .iopen{display:flex;align-items:center;gap:9px;flex:1;min-width:0;
+    padding:0;background:none;border:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
+  .item:hover{background:var(--bg2);color:var(--tx)}
+  .item.on{background:var(--bg3);color:var(--tx)}
+  .item .dot{width:7px;height:7px;border-radius:50%;flex:none;border:1.4px solid var(--mut2)}
+  .item .dot.fill{background:var(--mut);border-color:var(--mut)}
+  .item .dot.warn{border:0;background:none;color:#e0a458;font-size:11px;line-height:1;
+    width:auto;height:auto}
+  /* with an account the list arrives as titles only, so a row can be neither
+     full nor empty: it is not known yet. Dashed, and it pulses while it loads. */
+  .item .dot.pend{border-style:dashed;border-color:var(--mut);opacity:.8}
+  .item .dot.load{animation:dotPulse 1s ease-in-out infinite}
+  @keyframes dotPulse{0%,100%{opacity:.3}50%{opacity:1}}
+  .item .nm{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .sfoot{display:flex;align-items:center;gap:8px;padding:9px 11px;border-top:1px solid var(--line)}
+  .sfoot .av{width:19px;height:19px;border-radius:50%;background:var(--accSoft);color:var(--acc);
+    display:grid;place-items:center;font-size:11px;flex:none}
+  .sfoot b{font-size:12px;font-weight:600}
+  .sfoot small{color:var(--mut2);font-size:12px}
+  /* the footer is the account button now: name, what is left this month, and
+     one dot for whether anything is unsaved */
+  .sfoot .who{display:flex;align-items:center;gap:8px;min-width:0;flex:none;
+    padding:3px 5px;margin:-3px -5px;border-radius:8px;text-align:left}
+  .sfoot .who:hover,.sfoot .who.on{background:var(--bg3)}
+  .sfoot .who b{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .sfoot .sync.ok{color:var(--ok)}
+  .sfoot .sync.bad,.sfoot .sync.off{color:#e0a458}
+  .sfoot .sync.busy{color:var(--acc);animation:sp .9s linear infinite}
+  /* ---------- document pane ---------- */
+  .doc{background:var(--paper);color:var(--ink);display:flex;flex-direction:column;
+    min-width:0;min-height:0;border-left:1px solid var(--line)}
+  .dhead{display:flex;align-items:center;gap:9px;padding:9px 12px;flex:none}
+  .dhead .dt{font-size:13.5px;font-weight:600}
+  .dhead .dchip{font-size:11px;color:var(--pmut);background:var(--psoft);
+    border:1px solid var(--pline);border-radius:5px;padding:1px 6px}
+  .dhead .dsp{flex:1}
+  .dbtn{width:27px;height:25px;border-radius:6px;display:grid;place-items:center;
+    color:#8b8580;position:relative}
+  .dbtn:hover{background:var(--psoft);color:var(--ink)}
+  .dbtn svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.7;fill:none;
+    stroke-linecap:round;stroke-linejoin:round}
+  .dbtn .live{position:absolute;top:3px;right:4px;width:5px;height:5px;border-radius:50%;
+    background:var(--acc)}
+  .dbtn.on{background:#f1ece9;color:var(--acc)}
+
+  /* ---------- stage ---------- */
+  .stage{flex:1;min-height:240px;position:relative;overflow:hidden;background:var(--paper)}
+  .view{position:absolute;inset:0;display:none;flex-direction:column}
+  .view.on{display:flex}
+
+  /* map canvas */
+  .cwrap{flex:1;min-height:0;overflow:auto;position:relative;display:flex}
+  .cwrap::-webkit-scrollbar{width:11px;height:11px}
+  .cwrap::-webkit-scrollbar-thumb{background:#d8d4cf;border-radius:9px;border:3px solid var(--paper)}
+  #zoomWrap{position:relative;transform-origin:0 0;margin:auto;flex:none}
+  #canvas{position:absolute;inset:0}
+  #wires{position:absolute;inset:0;overflow:visible;pointer-events:none}
+  /* width:max-content matters — a box is placed with `left` only, so without it the
+     shrink-to-fit width is whatever is left to the sheet edge, and boxes near the
+     right edge come out half as wide as the ones on the left */
+  .node{position:absolute;transform:translate(-50%,-50%);cursor:default;
+    display:flex;align-items:center;width:max-content;max-width:230px;user-select:none}
+  .node .lbl{outline:none;white-space:pre-wrap;word-break:break-word}
+  .node.sel{box-shadow:0 0 0 2px #3b7dd8, 0 0 0 4px #3b7dd833 !important}
+  .node.multi{box-shadow:0 0 0 1.5px #3b7dd8 !important}
+  .node .hnd{position:absolute;width:7px;height:7px;background:#fff;border:1.4px solid #3b7dd8;
+    border-radius:1px;display:none}
+  .node.sel .hnd{display:block}
+  .node .hnd.nw{left:-4px;top:-4px} .node .hnd.ne{right:-4px;top:-4px}
+  .node .hnd.sw{left:-4px;bottom:-4px} .node .hnd.se{right:-4px;bottom:-4px}
+  .node .pin{position:absolute;top:-8px;right:-8px;font-size:9px;background:#fff;
+    border:1px solid var(--pline);border-radius:20px;padding:0 4px;color:#8b8580;display:none}
+  .node.moved .pin{display:block}
+  /* floating canvas toolbar */
+  .ctools{position:absolute;left:50%;transform:translateX(-50%);bottom:14px;z-index:8;
+    display:flex;align-items:center;gap:2px;background:#fff;border:1px solid var(--pline);
+    border-radius:11px;padding:4px;box-shadow:0 8px 26px rgba(31,30,29,.13)}
+  .ctools button{height:27px;padding:0 9px;border-radius:7px;font-size:12px;font-weight:600;
+    color:#4b4744;display:flex;align-items:center;gap:5px}
+  .ctools button:hover:not(:disabled){background:var(--psoft);color:var(--ink)}
+  .ctools button:disabled{opacity:.35;cursor:default}
+  .ctools .sepv{width:1px;height:18px;background:var(--pline);margin:0 3px}
+  .ctools .zm{font-variant-numeric:tabular-nums;font-size:11.5px;color:var(--pmut);
+    min-width:38px;text-align:center}
+  .ctools svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.8;fill:none;
+    stroke-linecap:round;stroke-linejoin:round}
+  .ctools button.pri{background:var(--ink);color:#fff}
+  .ctools button.pri:hover{background:#000;color:#fff}
+
+  /* empty state */
+  .empty{position:absolute;inset:0;display:grid;place-items:center;padding:26px;z-index:4}
+  .empty .card{max-width:430px;text-align:center}
+  .empty h2{font-size:17px;margin:0 0 6px}
+  .empty p{font-size:12.5px;color:var(--pmut);margin:0 0 14px;line-height:1.65}
+  .empty .ex{display:flex;flex-direction:column;gap:6px;text-align:left}
+  .empty .ex button{border:1px solid var(--pline);border-radius:9px;padding:8px 11px;
+    font-size:12.5px;color:#4b4744;background:#fff}
+  .empty .ex button:hover{border-color:var(--acc);color:var(--acc)}
+
+  /* plan view */
+  .plan{flex:1;min-height:0;overflow:auto;padding:22px 30px 40px}
+  .plan::-webkit-scrollbar{width:11px}
+  .plan::-webkit-scrollbar-thumb{background:#d8d4cf;border-radius:9px;border:3px solid var(--paper)}
+  .plan .inner{max-width:660px;margin:0 auto}
+  .plan h1{font-size:21px;margin:0 0 4px}
+  .plan .sub{font-size:12px;color:var(--pmut);margin:0 0 20px}
+  .plan h3{font-size:13px;margin:22px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--pline)}
+  .plan ul{margin:0;padding-left:17px}
+  .plan li{font-size:12.5px;line-height:1.75;color:#3c3a37;margin-bottom:3px}
+  .plan li b{color:var(--ink)}
+  .plan .note{background:var(--psoft);border:1px solid var(--pline);border-left:2px solid var(--acc);
+    border-radius:0 8px 8px 0;padding:9px 12px;font-size:12px;color:#4b4744;margin:0 0 18px}
+  .plan .wk{display:flex;gap:9px;font-size:12.5px;padding:6px 0;border-bottom:1px dashed var(--pline)}
+  .plan .wk b{flex:none;width:62px;color:var(--acc)}
+  /* ---------- transcript overlay + composer ---------- */
+  .logwrap{flex:none;border-top:1px solid var(--pline);background:var(--paper)}
+  .loghead{display:flex;align-items:center;gap:8px;padding:6px 14px;font-size:11.5px;color:var(--pmut)}
+  .loghead b{font-weight:600;color:#4b4744}
+  .loghead .lsp{flex:1}
+  .loghead button{font-size:11.5px;color:var(--pmut);display:flex;align-items:center;gap:4px}
+  .loghead button:hover{color:var(--acc)}
+  .log{max-height:0;overflow:hidden;transition:max-height .22s ease}
+  .log.on{max-height:min(30vh,240px);overflow:auto}
+  .log::-webkit-scrollbar{width:11px}
+  .log::-webkit-scrollbar-thumb{background:#d8d4cf;border-radius:9px;border:3px solid var(--paper)}
+  .log .inner{padding:4px 14px 12px;display:flex;flex-direction:column;gap:11px}
+  .m{font-size:12.5px;line-height:1.62}
+  .m .who{font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;
+    color:var(--mut2);margin-bottom:3px}
+  .m.you .who{color:var(--link)}
+  .m.ai .who{color:var(--acc)}
+  .m .tx{color:#3c3a37;white-space:pre-wrap}
+  .patch{border:1px solid var(--pline);border-radius:9px;margin-top:7px;overflow:hidden}
+  .patch .ph{display:flex;align-items:center;gap:7px;padding:6px 10px;background:var(--psoft);
+    font-size:11.5px;font-weight:600;color:#4b4744;border-bottom:1px solid var(--pline)}
+  .patch .ph .psp{flex:1}
+  .patch .ph button{font-size:11px;font-weight:600;color:var(--pmut);border:1px solid var(--pline);
+    background:#fff;border-radius:6px;padding:2px 7px}
+  .patch .ph button:hover{border-color:var(--acc);color:var(--acc)}
+  .patch table{width:100%;border-collapse:collapse}
+  .patch td{font-size:11.5px;padding:4px 10px;border-bottom:1px solid #f2efec}
+  .patch td:first-child{color:var(--pmut);font-family:ui-monospace,monospace;width:47%}
+  .patch tr:last-child td{border-bottom:0}
+  .patch .old{color:#a49e98;text-decoration:line-through;margin-right:6px}
+  .patch .new{color:var(--ok);font-weight:600}
+  .sw{display:inline-block;width:9px;height:9px;border-radius:2px;border:1px solid #0002;
+    vertical-align:-1px;margin-right:4px}
+  .composer{flex:none;padding:8px 14px 10px}
+  .cbox{display:flex;align-items:flex-end;gap:8px;border:1px solid #d9d5d0;border-radius:11px;
+    background:#fff;padding:9px 10px 9px 13px;box-shadow:0 1px 2px rgba(31,30,29,.04)}
+  .cbox:focus-within{border-color:#b9b3ad;box-shadow:0 0 0 3px #d977571f}
+  .cbox textarea{flex:1;border:0;outline:none;resize:none;background:transparent;
+    font-size:13px;line-height:1.5;max-height:120px;min-height:20px}
+  .cbox textarea::placeholder{color:#a49e98}
+  .cbox .ent{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;
+    color:#8b8580;flex:none}
+  .cbox .ent:hover{background:var(--psoft);color:var(--ink)}
+  .cbox .ent svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.8;fill:none;
+    stroke-linecap:round;stroke-linejoin:round}
+  .cfoot{display:flex;align-items:center;gap:8px;padding:7px 3px 0}
+  .cfoot .cz{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--pmut);
+    border-radius:7px;padding:3px 8px 3px 6px}
+  .cfoot .cz:hover{background:var(--psoft);color:var(--ink)}
+  .cfoot .cz.on{background:#f1ece9;color:var(--acc)}
+  .cfoot .cz svg{width:13px;height:13px;stroke:currentColor;stroke-width:1.8;fill:none;
+    stroke-linecap:round;stroke-linejoin:round}
+  .cfoot .plus{width:20px;height:20px;border-radius:5px;display:grid;place-items:center;
+    color:var(--pmut)}
+  .cfoot .plus:hover{background:var(--psoft);color:var(--ink)}
+  .cfoot .csp{flex:1}
+  .cfoot .model{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--pmut)}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .qchips{display:flex;gap:5px;flex-wrap:wrap;padding:0 3px 7px}
+  .qchip{font-size:11px;border:1px solid var(--pline);border-radius:20px;padding:3px 9px;
+    color:var(--pmut);background:#fff}
+  .qchip:hover{border-color:var(--acc);color:var(--acc)}
+  /* ---------- CUSTOMIZE: Figma-style inspector ---------- */
+  .insp{background:var(--bg);border-left:1px solid var(--line);display:none;
+    flex-direction:column;min-height:0;min-width:0}
+  .shell.showinsp .insp{display:flex}
+  .itabs{display:flex;align-items:center;gap:1px;padding:6px 6px 0;flex:none}
+  .itab{padding:5px 9px;border-radius:6px;font-size:11.5px;font-weight:600;color:var(--mut2)}
+  .itab:hover{color:var(--tx)}
+  .itab.on{color:var(--tx);background:var(--bg3)}
+  .itabs .isp{flex:1}
+  .ibody{flex:1;overflow:auto;min-height:0}
+  .ibody::-webkit-scrollbar{width:9px}
+  .ibody::-webkit-scrollbar-thumb{background:#3d3936;border-radius:9px;border:3px solid var(--bg)}
+  .selbar{display:flex;align-items:center;gap:7px;padding:7px 10px;border-bottom:1px solid var(--line);
+    font-size:11.5px;color:var(--mut)}
+  .selbar b{color:var(--tx);font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .selbar .ssp{flex:1}
+  .selbar .rst{font-size:10.5px;color:var(--mut2);border:1px solid var(--line);border-radius:5px;
+    padding:1px 6px}
+  .selbar .rst:hover{border-color:var(--acc);color:var(--acc)}
+  .sec{border-bottom:1px solid var(--line);padding:2px 0 8px}
+  .sech{display:flex;align-items:center;gap:6px;width:100%;padding:7px 10px 5px;
+    font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--mut)}
+  .sech:hover{color:var(--tx)}
+  .sech .cv{width:9px;transition:transform .15s;color:var(--mut2)}
+  .sec.shut .sech .cv{transform:rotate(-90deg)}
+  .sec.shut .secb{display:none}
+  .secb{padding:2px 10px 0;display:flex;flex-direction:column;gap:6px}
+  .r{display:flex;align-items:center;gap:6px}
+  .r .rl{font-size:11px;color:var(--mut2);width:52px;flex:none;cursor:ew-resize;user-select:none}
+  .r .rl:hover{color:var(--acc)}
+  .r.stack{flex-direction:column;align-items:stretch;gap:5px}
+  .fld{display:flex;align-items:center;gap:5px;background:var(--bg2);border:1px solid transparent;
+    border-radius:6px;padding:3px 6px;min-width:0;flex:1}
+  .fld:hover{border-color:var(--line)}
+  .fld:focus-within{border-color:var(--acc);background:var(--bg3)}
+  .fld i{font-style:normal;font-size:10.5px;color:var(--mut2);flex:none}
+  .fld input{width:100%;min-width:0;background:transparent;border:0;outline:none;
+    font-size:11.5px;font-variant-numeric:tabular-nums}
+  .fld input::placeholder{color:var(--mut2);font-style:italic}
+  .fld.num{max-width:74px}
+  .fld select{width:100%;background:transparent;border:0;outline:none;font-size:11.5px;
+    appearance:none;cursor:pointer}
+  .fld.sel::after{content:"";width:0;height:0;border:3.2px solid transparent;
+    border-top-color:var(--mut2);margin-top:3px;flex:none}
+  .seg{display:flex;background:var(--bg2);border-radius:6px;padding:2px;gap:2px;flex:1}
+  .seg button{flex:1;height:21px;border-radius:4px;font-size:11px;font-weight:600;
+    color:var(--mut2);display:grid;place-items:center}
+  .seg button:hover{color:var(--tx)}
+  .seg button.on{background:var(--bg3);color:var(--tx);box-shadow:0 1px 2px #0004}
+  .seg svg{width:12px;height:12px;stroke:currentColor;stroke-width:1.8;fill:none;
+    stroke-linecap:round;stroke-linejoin:round}
+  .chk{width:26px;height:15px;border-radius:20px;background:#3d3936;position:relative;flex:none}
+  .chk::after{content:"";position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;
+    background:#8b8580;transition:.16s}
+  .chk.on{background:var(--acc)}
+  .chk.on::after{left:13px;background:#fff}
+  .swatch{width:15px;height:15px;border-radius:3px;flex:none;border:1px solid #ffffff26;
+    position:relative;overflow:hidden;cursor:pointer}
+  .swatch input{position:absolute;inset:-4px;width:130%;height:130%;border:0;padding:0;
+    opacity:0;cursor:pointer}
+  .ovr{width:6px;height:6px;border-radius:50%;background:var(--acc);flex:none;margin-left:2px;
+    visibility:hidden;cursor:pointer}
+  .r.over .ovr{visibility:visible}
+  .pad{display:grid;grid-template-columns:1fr 1fr auto;gap:5px}
+  .align{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--bg2);
+    border-radius:6px;padding:2px;width:64px}
+  .align button{height:17px;border-radius:3px;display:grid;place-items:center}
+  .align button::after{content:"";width:5px;height:5px;border-radius:1px;background:#5e5954}
+  .align button:hover::after{background:var(--mut)}
+  .align button.on::after{background:var(--acc);width:6px;height:6px}
+  .presets{display:flex;flex-wrap:wrap;gap:5px}
+  .preset{border:1px solid var(--line);border-radius:7px;padding:4px 8px;font-size:11px;
+    color:var(--mut);display:flex;align-items:center;gap:5px}
+  .preset:hover{border-color:var(--acc);color:var(--tx)}
+  .preset.on{border-color:var(--acc);color:var(--tx);background:var(--accSoft)}
+  .preset .ps{width:8px;height:8px;border-radius:2px}
+  .tokens{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+  .tok{aspect-ratio:1;border-radius:5px;position:relative;overflow:hidden;
+    border:1px solid #ffffff1f;cursor:pointer}
+  .tok input{position:absolute;inset:-4px;width:140%;height:140%;opacity:0;border:0;cursor:pointer}
+  .hint{font-size:10.5px;color:var(--mut2);line-height:1.55;padding:2px 0 0}
+  .code{margin:0;padding:9px 10px;background:var(--bg2);border-radius:7px;font-size:10.5px;
+    line-height:1.6;color:#c7c1bb;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    white-space:pre-wrap;word-break:break-word;max-height:340px;overflow:auto}
+  .ifoot{flex:none;border-top:1px solid var(--line);padding:8px 10px;display:flex;gap:6px}
+  .ifoot button{flex:1;border-radius:7px;padding:6px;font-size:11.5px;font-weight:600;
+    border:1px solid var(--line);color:var(--mut)}
+  .ifoot button:hover{border-color:var(--acc);color:var(--tx)}
+  .ifoot button.pri{background:var(--acc);border-color:var(--acc);color:#fff}
+  /* context menu on canvas */
+  .ctx{position:fixed;z-index:90;background:#fff;border:1px solid var(--pline);border-radius:9px;
+    box-shadow:0 12px 34px rgba(31,30,29,.2);padding:4px;min-width:172px;display:none}
+  .ctx.on{display:block}
+  .ctx button{display:flex;align-items:center;gap:8px;width:100%;padding:6px 9px;border-radius:6px;
+    font-size:12px;color:#3c3a37;text-align:left}
+  .ctx button:hover{background:var(--psoft)}
+  .ctx button kbd{margin-left:auto;font:inherit;font-size:10.5px;color:#a49e98}
+  .ctx .sep{height:1px;background:var(--pline);margin:4px 2px}
+
+  .toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,14px);z-index:120;
+    background:#111;color:#fff;font-size:12px;border-radius:9px;padding:8px 14px;
+    opacity:0;transition:.2s;pointer-events:none;max-width:86vw;text-align:center}
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+
+  @media (max-width:1120px){
+    .shell,.shell.showinsp{grid-template-columns:206px minmax(0,1fr)}
+    .shell.nosid,.shell.nosid.showinsp{grid-template-columns:0 minmax(0,1fr)}
+    .shell.showinsp .insp{position:fixed;right:0;top:38px;bottom:0;width:268px;z-index:60;
+      box-shadow:-14px 0 40px #0006}
+  }
+
+  /* ---------- a phone ----------
+     Not a different app: the tray and the inspector stop being columns and
+     become drawers over the document, because 375px cannot hold three of
+     anything. Both are positioned inside .shell rather than the viewport, so
+     the announcement strip pushes them down with everything else instead of
+     being covered by them.
+
+     The tray starts closed and the toggle already in the titlebar is what opens
+     it. store.js owns that state: isPhone() decides it at load, so the first
+     paint is already right, and a crossing of this same 760px re-decides it, so
+     a window that is widened does not keep a phone's tray. */
+  @media (max-width:760px){
+    /* 100vh on a phone is the viewport with the address bar pretending not to
+       be there, which puts the composer under it */
+    .app{height:100dvh}
+    .shell{position:relative}
+    .shell,.shell.nosid,.shell.showinsp,.shell.nosid.showinsp{
+      grid-template-columns:minmax(0,1fr)}
+    .side{position:absolute;left:0;top:0;bottom:0;width:min(282px,84vw);z-index:70;
+      border-right:1px solid var(--line);box-shadow:16px 0 44px #00000080;
+      transform:translateX(-101%);transition:transform .18s ease-out}
+    .shell:not(.nosid) .side{transform:none}
+    .scrim{display:block;position:absolute;inset:0;z-index:65;
+      background:#0d0c0b8c;animation:cogFade .18s ease-out both}
+    .shell.showinsp .insp{position:absolute;top:0;right:0;bottom:0;
+      width:min(300px,92vw);z-index:60}
+    .doc{border-left:0}
+    /* the three window-frame dots have nothing to do in a browser and less on a
+       phone, where they cost the width of a real control */
+    .titlebar .wbtn{display:none}
+    .dhead{flex-wrap:wrap;gap:6px;padding:8px 10px}
+    .apop{left:8px;right:8px;width:auto;bottom:44px}
+    .toast{bottom:16px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .side{transition:none}
+  }
+
+/* ============================================================
+   react additions
+   ============================================================ */
+
+  /* ---------- chat history in the tray ---------- */
+  .item{position:relative}
+  .item .nm{flex:1}
+  .item .acts{display:none;gap:1px;margin-left:auto;flex:none}
+  .item:hover .acts,.item.on .acts{display:flex}
+  .item .acts button{width:19px;height:19px;border-radius:5px;display:grid;place-items:center;
+    color:var(--mut2)}
+  .item .acts button:hover{background:#403b37;color:var(--tx)}
+  .item .acts svg{width:11px;height:11px;stroke:currentColor;stroke-width:1.8;fill:none;
+    stroke-linecap:round;stroke-linejoin:round}
+  .item .when{font-size:10px;color:var(--mut2);flex:none;margin-left:auto}
+  .item:hover .when,.item.on .when{display:none}
+  .item input.ren{flex:1;min-width:0;background:var(--bg3);border:1px solid var(--acc);
+    border-radius:5px;padding:1px 5px;font-size:12px;outline:none}
+  .none{padding:4px 12px 10px;font-size:11px;color:var(--mut2);line-height:1.5}
+  .search{margin:0 8px 6px;display:flex;align-items:center;gap:6px;background:var(--bg2);
+    border:1px solid transparent;border-radius:7px;padding:4px 8px}
+  .search:focus-within{border-color:var(--line)}
+  .search svg{width:12px;height:12px;stroke:var(--mut2);stroke-width:1.9;fill:none;flex:none}
+  .search input{flex:1;min-width:0;background:transparent;border:0;outline:none;font-size:11.5px}
+  .search input::placeholder{color:var(--mut2)}
+
+  /* ---------- model state in the composer ---------- */
+  .cfoot .model.busy b{color:#7c3aed}
+  .cfoot .model b{font-weight:600;color:#4b4744}
+  .m.err .who{color:var(--bad)}
+  .m.err .tx{color:#9a4f45}
+  .m .meta{font-size:10.5px;color:#a49e98;margin-top:4px}
+  .think{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--pmut)}
+  /* the overlay scrim. Named .cogveil, not .busy: the composer footer carries
+     a `busy` state class of its own, and a bare .busy rule matched that span
+     too — turning it into a full-viewport blur layer with its text stranded in
+     the top-left corner. State flags and layout owners get separate names. */
+  .cogveil{position:absolute;inset:0;z-index:9;display:grid;place-items:center;
+    background:#f7f5f4cc;backdrop-filter:blur(3px) saturate(1.08);
+    animation:cogFade .28s ease both}
+  .banner{display:flex;align-items:flex-start;gap:8px;margin:0 14px 8px;padding:7px 10px;
+    border:1px solid #e8cfc9;background:#fdf4f2;border-radius:8px;font-size:11.5px;color:#8f4d42}
+  .banner button{margin-left:auto;flex:none;color:#8f4d42;font-weight:600;font-size:11px}
+  .banner button:hover{text-decoration:underline}
+
+  /* ---------- canvas: marquee + snap guides ---------- */
+  .marquee{position:absolute;border:1px solid var(--link);background:#3b7dd814;
+    pointer-events:none;z-index:6}
+  .guide{position:absolute;background:#e0559b;pointer-events:none;z-index:7}
+  .guide.v{width:1px} .guide.h{height:1px}
+
+  /* ---------- inspector: arrange, layers, history ---------- */
+  .agrid{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;flex:1}
+  .agrid button{height:22px;border-radius:5px;background:var(--bg2);display:grid;place-items:center;
+    color:var(--mut2)}
+  .agrid button:hover:not(:disabled){background:var(--bg3);color:var(--tx)}
+  .agrid button:disabled{opacity:.3;cursor:default}
+  .agrid svg{width:13px;height:13px;stroke:currentColor;stroke-width:1.7;fill:none;
+    stroke-linecap:round}
+  .fld textarea{width:100%;min-width:0;background:transparent;border:0;outline:none;resize:vertical;
+    font-size:11.5px;line-height:1.5;min-height:44px;font-family:inherit}
+  .lay{display:flex;flex-direction:column;gap:1px}
+  .lay .lr{display:flex;align-items:center;gap:6px;padding:3px 5px;border-radius:5px;
+    font-size:11.5px;color:var(--mut);text-align:left;width:100%}
+  .lay .lr:hover{background:var(--bg2);color:var(--tx)}
+  .lay .lr.on{background:var(--bg3);color:var(--tx)}
+  .lay .lr .sq{width:7px;height:7px;border-radius:2px;flex:none}
+  .lay .lr .lt{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .lay .lr .lk{flex:none;font-size:9px;opacity:.7}
+  .lay .lr.leaf{padding-left:18px;color:var(--mut2)}
+  .hist{display:flex;flex-direction:column;gap:1px}
+  .hist button{display:flex;align-items:center;gap:7px;padding:3px 6px;border-radius:5px;
+    font-size:11.5px;color:var(--mut2);text-align:left}
+  .hist button:hover{background:var(--bg2);color:var(--tx)}
+  .hist button i{font-style:normal;font-size:10px;color:#5e5954;margin-left:auto}
+  .hist button.now{color:var(--acc)}
+  .kv{display:flex;gap:8px;font-size:11px;color:var(--mut2);padding:1px 0}
+  .kv b{color:var(--mut);font-weight:600;margin-left:auto;font-variant-numeric:tabular-nums}
+
+  /* ============================================================
+     COGNIX — brand marks and the thinking animation.
+     The trace itself is drawn in Thinking.js; everything here is
+     the frame around it: the glass card, the halo behind the
+     logo, the stage swap and the indeterminate bar.
+     ============================================================ */
+  .brand{display:flex;align-items:center;gap:7px;padding:0 8px 0 2px;user-select:none;
+    -webkit-app-region:drag}
+  .brand img{width:17px;height:17px;display:block;filter:drop-shadow(0 0 5px #a855f766)}
+  .brand b{font-size:12.5px;font-weight:650;letter-spacing:.25px;
+    background:linear-gradient(92deg,#c084fc,#6ba8ff 48%,#fb923c);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sfoot .av{background:#221c2e}
+  .sfoot .av img{width:14px;height:14px;display:block}
+  .dhead .dmark{width:16px;height:16px;display:block;flex:none;margin-right:-2px}
+  .empty .card .emark{width:44px;height:44px;display:block;margin:0 auto 12px;
+    filter:drop-shadow(0 4px 14px #a855f733)}
+
+  @keyframes cogFade{from{opacity:0}to{opacity:1}}
+  .cog{position:relative;display:flex;flex-direction:column;gap:9px;width:352px;
+    padding:15px 17px 14px;border-radius:16px;color:#f3effa;
+    background:radial-gradient(125% 145% at 12% -10%,#211a35 0%,#0d0b13 62%);
+    box-shadow:0 26px 64px -20px #1b0a2ec0,0 0 46px -14px #a855f74d,
+      0 0 0 1px #ffffff0a inset;
+    animation:cogRise .34s cubic-bezier(.22,1,.36,1) both}
+  @keyframes cogRise{from{opacity:0;transform:translateY(9px) scale(.985)}
+    to{opacity:1;transform:none}}
+  /* the lit edge: a gradient ring masked to 1px, breathing */
+  .cog:before{content:'';position:absolute;inset:0;border-radius:16px;padding:1px;
+    background:linear-gradient(115deg,#ff2f8788,#a855f7cc 42%,#ffb02e88);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);mask-composite:exclude;
+    pointer-events:none;animation:cogEdge 4.4s ease-in-out infinite}
+  @keyframes cogEdge{0%,100%{opacity:.4}50%{opacity:1}}
+  .cogtop{display:flex;align-items:center;gap:10px}
+  .cogmark{position:relative;width:26px;height:26px;flex:none;display:grid;place-items:center}
+  .cogmark img{width:25px;height:25px;display:block;position:relative;z-index:1;
+    animation:cogBreathe 2.7s ease-in-out infinite}
+  .cogmark:after{content:'';position:absolute;inset:-8px;border-radius:50%;
+    background:conic-gradient(from 0deg,#ff2f8700,#a855f7cc 22%,#ffb02e00 55%,#ff2f8700);
+    filter:blur(6px);opacity:.8;animation:sp 2.9s linear infinite}
+  @keyframes cogBreathe{0%,100%{transform:scale(1);filter:drop-shadow(0 0 3px #a855f766)}
+    50%{transform:scale(1.08);filter:drop-shadow(0 0 12px #c084fcbb)}}
+  .coghd{font-size:12.8px;font-weight:600;line-height:1.35;letter-spacing:.1px}
+  .cwave{display:block;margin:-2px 0 -4px}
+  .cogfoot{display:flex;align-items:center;gap:8px;font-size:11px;color:#a79cbe}
+  .cogfoot .cogsp{flex:1}
+  .cogst{animation:cogIn .42s cubic-bezier(.22,1,.36,1) both}
+  @keyframes cogIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  .cogel{font-variant-numeric:tabular-nums;color:#6d6486}
+  .cogbar{height:2px;border-radius:2px;background:#ffffff14;overflow:hidden}
+  .cogbar i{display:block;height:100%;width:34%;border-radius:2px;
+    background:linear-gradient(90deg,#ff2f8700,#ff2f87,#a855f7 55%,#ffb02e,#ffb02e00);
+    animation:cogSlide 1.85s cubic-bezier(.55,.05,.45,.95) infinite}
+  @keyframes cogSlide{0%{transform:translateX(-110%)}100%{transform:translateX(330%)}}
+  .coghint{font-size:10.5px;color:#5f5878;letter-spacing:.15px}
+  /* inline: composer footer and a pending transcript row */
+  .miniwave{display:block;flex:none;opacity:.95;margin:-1px 0}
+  .think .miniwave{margin-right:1px}
+  @media (prefers-reduced-motion:reduce){
+    .cog,.cog:before,.cogmark img,.cogmark:after,.cogbar i,.cogst,.cogveil{animation:none}
+  }
+
+  /* ============================================================
+     PRODUCTION — keyboard focus, screen-reader text, the crash
+     screen, and a system-wide brake on motion. Nothing here
+     changes the resting look of the app.
+     ============================================================ */
+
+  /* the sheet had no focus styling at all, so a keyboard user could not see
+     where they were. :focus-visible only paints for keyboard and a11y tools,
+     so the mouse still gets the quiet look the design asks for. */
+  a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,
+  textarea:focus-visible,[tabindex]:focus-visible,[contenteditable]:focus-visible{
+    outline:2px solid var(--acc);outline-offset:2px}
+  /* on the paper canvas and inside dense controls the ring needs to sit tight */
+  .node:focus-visible,.lbl:focus-visible,.ovr:focus-visible,.tok:focus-visible,
+  .seg button:focus-visible,.align button:focus-visible{outline-offset:1px}
+  .fld input:focus-visible,.fld select:focus-visible{outline-offset:-1px}
+  /* the composer already lights up via :focus-within — no second ring on top.
+     The search box only shifts its border colour, so that one does need it. */
+  .search input:focus-visible,.cbox textarea:focus-visible{outline:none}
+  .search:focus-within{outline:2px solid var(--acc);outline-offset:1px}
+
+  /* visually hidden, still read aloud — used for the composer's real <label> */
+  .sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;
+    clip:rect(0 0 0 0);clip-path:inset(50%);overflow:hidden;white-space:nowrap}
+
+  /* the layer rows became real buttons so they can be tabbed to; these two
+     lines keep them laid out exactly as the divs were */
+  .lay .lr{width:100%;text-align:left;font:inherit}
+
+  /* ---------- crash screen (ErrorBoundary + boot fallback) ---------- */
+  .crash{position:fixed;inset:0;z-index:99;display:grid;place-items:center;
+    padding:24px;background:var(--bg);overflow:auto}
+  .crashcard{width:min(560px,100%);padding:24px 26px 22px;border-radius:14px;
+    background:var(--bg2);border:1px solid var(--line);box-shadow:0 24px 60px -24px #000a}
+  .crashi{color:var(--acc);display:block;margin-bottom:8px}
+  .crashcard h1{margin:0 0 10px;font-size:17px;font-weight:600;letter-spacing:-.1px}
+  .crashcard p{margin:0 0 10px;font-size:12.5px;line-height:1.62;color:var(--mut)}
+  .crashmsg{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:11.5px;color:var(--bad);word-break:break-word}
+  .crashlist{margin:0 0 12px;padding-left:18px;font-size:11.5px;color:var(--mut2);
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  .crashacts{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+  .cbtn{padding:8px 14px;border-radius:8px;background:var(--bg3);color:var(--tx);
+    border:1px solid var(--line);font-size:12.5px}
+  .cbtn:hover{background:#39352f}
+  .cbtn.pri{background:var(--acc);border-color:var(--acc);color:#fff}
+  .cbtn.pri:hover{filter:brightness(1.07)}
+  .cbtn.dang{background:var(--bad);border-color:var(--bad);color:#fff}
+  .crashok{margin:10px 0 0;font-size:11.5px;color:var(--mut2)}
+  .crashmore{margin:12px 0 0;padding:0;font-size:11.5px;color:var(--mut);
+    text-decoration:underline;text-underline-offset:2px}
+  .crashmore:hover{color:var(--tx)}
+  .crashdet{margin:10px 0 0;padding:10px 12px;max-height:210px;overflow:auto;
+    border-radius:8px;background:#141312;border:1px solid var(--line);
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:10.5px;line-height:1.55;color:var(--mut);white-space:pre-wrap;
+    word-break:break-word;user-select:text}
+
+  /* the app is full of motion — drags, veils, the thinking card. One brake for
+     anyone who has asked the OS for less of it. Status text still changes, so
+     nothing that carries meaning is lost. */
+  @media (prefers-reduced-motion:reduce){
+    *,*:before,*:after{animation-duration:1ms !important;animation-delay:0ms !important;
+      animation-iteration-count:1 !important;transition-duration:1ms !important;
+      transition-delay:0ms !important;scroll-behavior:auto !important}
+  }
+
+  /* ============================================================
+     ACCOUNTS — the strip an administrator can put under the
+     titlebar, the account popover behind the footer button, and
+     the two cards that interrupt: bring your maps over, and your
+     sign-in ran out. None of it exists in local mode.
+     ============================================================ */
+
+  /* an empty row would still take 1px of height, so the row only exists when
+     there is something in it */
+  .app.hasann{grid-template-rows:38px auto minmax(0,1fr)}
+  .ann{display:flex;align-items:center;gap:9px;padding:7px 11px;font-size:12px;
+    background:var(--bg2);border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);color:var(--mut)}
+  .ann .annt{flex:1;min-width:0}
+  .ann .anni svg{width:14px;height:14px;display:block;stroke:currentColor;
+    stroke-width:1.7;fill:none;stroke-linecap:round}
+  .ann.work{color:#e0a458;background:#2a2118}
+  .ann.say{color:var(--tx)}
+
+  .apop{position:fixed;left:8px;bottom:48px;z-index:130;width:288px;
+    display:flex;flex-direction:column;gap:7px;padding:13px 14px 12px;
+    border-radius:13px;background:#211f1d;border:1px solid var(--line);
+    box-shadow:0 22px 54px -18px #000000cc;animation:cogIn .16s ease-out both}
+  .apop .ahead{display:flex;align-items:center;gap:9px;margin-bottom:2px}
+  .apop .aav{width:28px;height:28px;border-radius:50%;flex:none;background:#221c2e;
+    display:grid;place-items:center}
+  .apop .aav img{width:18px;height:18px;display:block}
+  .apop .awho{display:flex;flex-direction:column;min-width:0;flex:1}
+  .apop .awho b{font-size:12.5px;font-weight:650;overflow:hidden;
+    white-space:nowrap;text-overflow:ellipsis}
+  .apop .awho small{font-size:11px;color:var(--mut2);overflow:hidden;
+    white-space:nowrap;text-overflow:ellipsis}
+  .achip{flex:none;font-size:10px;font-weight:650;letter-spacing:.3px;
+    text-transform:uppercase;padding:2px 6px;border-radius:5px;
+    background:var(--accSoft);color:var(--acc)}
+  .achip.warn{background:#2a2118;color:#e0a458}
+
+  .ameter{display:flex;flex-direction:column;gap:4px;margin:0;font-size:11.5px;
+    color:var(--mut2)}
+  /* the same class is a one-line row when it is a <p> and a stack when it wraps
+     a bar, so the label/value pair reads the same in both */
+  p.ameter{flex-direction:row;align-items:baseline;gap:8px}
+  .ameter p{display:flex;align-items:baseline;gap:8px;margin:0;width:100%}
+  .ameter span{flex:1}
+  .ameter b{font-size:11.5px;font-weight:650;color:var(--tx)}
+  .ubar{width:100%;height:4px;border-radius:3px;background:var(--bg3);overflow:hidden}
+  .ubar i{display:block;height:100%;background:var(--ok);
+    transition:width .3s ease}
+  .ubar i.hot{background:var(--acc)}
+
+  .apop .alab{font-size:10.5px;font-weight:650;letter-spacing:.3px;
+    text-transform:uppercase;color:var(--mut2);margin-top:4px}
+  .apop .arow{display:flex;align-items:center;gap:6px}
+  .apop .arow .fld{flex:1;min-width:0}
+  .apop .cbtn{padding:6px 11px;font-size:11.5px;border-radius:7px}
+  .apop .cbtn:disabled{opacity:.5;cursor:default}
+  .apop .apw{display:flex;flex-direction:column;gap:6px}
+  .apop .ahint{font-size:10.5px;color:var(--mut2);line-height:1.5}
+  .apop .asep{height:1px;background:var(--line);margin:4px 0 2px}
+  /* the rows at the bottom: a link and two buttons that have to look the same */
+  .apop .alink{display:flex;align-items:center;gap:8px;width:100%;padding:6px 7px;
+    margin:0 -7px;border:0;border-radius:7px;background:none;font:inherit;
+    font-size:12px;color:var(--mut);text-align:left;text-decoration:none;cursor:pointer}
+  .apop .alink:hover{background:var(--bg3);color:var(--tx)}
+  .apop .alink:disabled{opacity:.55;cursor:default;background:none}
+  .apop .alink svg{width:14px;height:14px;flex:none;stroke:currentColor;
+    stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .apop .alink.out:hover{color:#eda594}
+  .aerr{margin:4px 0 0;font-size:11.5px;line-height:1.55;color:#eda594}
+  .aok{margin:4px 0 0;font-size:11.5px;line-height:1.55;color:#8fce9f}
+
+  /* the two cards that interrupt. `hard` cannot be dismissed by clicking away,
+     because there is nothing behind it that still works. */
+  .modal{position:fixed;inset:0;z-index:140;display:grid;place-items:center;
+    padding:22px;background:#0d0c0bcc;animation:cogFade .18s ease-out both}
+  .mcard{width:min(430px,100%);padding:20px 22px 18px;border-radius:14px;
+    background:#211f1d;border:1px solid var(--line);
+    box-shadow:0 26px 64px -20px #000000d9}
+  .mcard h2{margin:0 0 9px;font-size:15px;font-weight:650;letter-spacing:-.1px;
+    color:var(--tx)}
+  .mcard p{margin:0 0 9px;font-size:12.5px;line-height:1.62;color:var(--mut)}
+  .mcard .mnote{font-size:11.5px;color:var(--mut2)}
+  .mrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .mrow .cbtn{flex:1;min-width:130px;display:inline-flex;align-items:center;
+    justify-content:center;text-align:center;text-decoration:none}
+  .mrow .cbtn:disabled{opacity:.6;cursor:default}
+  /* the third choice in an invitation, which must not look like the other two:
+     .alink is styled inside .apop only, so a modal that uses one needs this or
+     it renders as unstyled text. */
+  .mcard .alink{display:block;margin:11px auto 0;padding:0;font-size:11.5px;
+    color:var(--mut);text-decoration:underline;text-decoration-color:#5a544f;
+    text-underline-offset:2px}
+  .mcard .alink:hover{color:var(--tx)}

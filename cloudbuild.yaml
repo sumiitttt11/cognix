@@ -1,0 +1,85 @@
+# =====================================================================
+# Cognix on Cloud Run, from a commit.
+#
+#   gcloud builds submit --config cloudbuild.yaml \
+#     --substitutions=_REGION=asia-south1,_PUBLIC_URL=https://your-url
+#
+# Three steps: run the suite, build, deploy. The suite runs first because a
+# green build of a broken tree is worse than a red one — it deploys.
+#
+# Nothing here contains a key. The five that matter live in Secret Manager
+# and are named, not pasted; deploy/cloudrun.md creates them.
+# =====================================================================
+substitutions:
+  _SERVICE: cognix
+  _REGION: us-central1
+  _REPO: cognix                 # Artifact Registry repository, same region
+  _PUBLIC_URL: ''               # https://... — the app's own address
+  _ADMIN_EMAILS: ''             # comma-separated; promoted on first sign-in
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: E2_HIGHCPU_8
+
+steps:
+  # 1. The tests. No pip install: the suite is standard library too.
+  - id: tests
+    name: python:3.12-slim
+    entrypoint: python
+    args: ['-m', 'unittest', 'discover', '-s', 'tests', '-v']
+
+  # 2. The image, tagged with the commit that produced it and with :latest so
+  #    a rollback has something to name.
+  - id: build
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:latest'
+      - '.'
+
+  - id: push
+    name: gcr.io/cloud-builders/docker
+    args: ['push', '--all-tags',
+           '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}']
+
+  # 3. Deploy. --set-env-vars and --set-secrets both *replace* their side of
+  #    the environment, so this file is the whole description of it: anything
+  #    added by hand in the console is gone at the next deploy, on purpose.
+  #
+  #    The five secrets are references, never values: this file is committed,
+  #    and a key in a committed file is a key that has already leaked. The
+  #    Supabase URL and anon key are not really secret — the anon key is the
+  #    one Supabase publishes to browsers, and policies.sql is what protects
+  #    the rows — but they live alongside the other three so that the five
+  #    lines of .env map one-to-one onto five secret names.
+  #
+  #    --timeout=300 because a map is a model call and a model call is slow;
+  #    the default 5 minutes is exactly the gateway's own ceiling.
+  #    --cpu-boost shortens the cold start that a first request pays for.
+  - id: deploy
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - '${_SERVICE}'
+      - '--image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA'
+      - '--region=${_REGION}'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--port=8080'
+      - '--timeout=300'
+      - '--concurrency=40'
+      - '--cpu=1'
+      - '--memory=512Mi'
+      - '--min-instances=0'
+      - '--max-instances=4'
+      - '--cpu-boost'
+      - '--execution-environment=gen2'
+      - '--set-env-vars=COGNIX_PUBLIC_URL=${_PUBLIC_URL},COGNIX_ADMIN_EMAILS=${_ADMIN_EMAILS},COGNIX_LOG_JSON=1'
+      - '--set-secrets=COGNIX_KEY=cognix-gateway-key:latest,COGNIX_SUPABASE_URL=cognix-supabase-url:latest,COGNIX_SUPABASE_ANON_KEY=cognix-supabase-anon-key:latest,COGNIX_SUPABASE_SERVICE_KEY=cognix-supabase-service-key:latest,COGNIX_SESSION_SECRET=cognix-session-secret:latest'
+
+timeout: 1200s

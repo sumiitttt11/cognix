@@ -1,0 +1,25 @@
+/* Deliberately plain. This page reports facts; it is not part of the product. */
+:root{color-scheme:dark light}
+body{margin:0;padding:28px clamp(16px,5vw,56px);background:#1c1b1a;color:#e8e6e3;
+  font:14px/1.55 ui-sans-serif,system-ui,"Segoe UI",Roboto,sans-serif}
+h1{margin:0 0 4px;font-size:19px;font-weight:600;letter-spacing:-.01em}
+.sub{margin:0 0 20px;max-width:62ch;color:#9c9791;font-size:12.5px}
+code{font:12px ui-monospace,"Cascadia Code",Consolas,monospace;color:#cfc9c2}
+.sum{display:inline-block;margin:0 0 18px;padding:7px 14px;border-radius:8px;
+  font-weight:600;font-variant-numeric:tabular-nums}
+.sum.ok{background:#1d3b2a;color:#7fe0a8;border:1px solid #2c6144}
+.sum.bad{background:#3d1f1f;color:#ff9b9b;border:1px solid #6b2f2f}
+.grp{margin:0 0 14px;border:1px solid #322f2c;border-radius:9px;overflow:hidden}
+.grp>h2{margin:0;padding:8px 12px;background:#232120;font-size:12px;font-weight:600;
+  letter-spacing:.03em;text-transform:uppercase;color:#b3ada6}
+.grp>ol{margin:0;padding:6px 0;list-style:none}
+.grp li{display:flex;gap:10px;padding:3px 12px;font-size:12.5px}
+.grp li>span:first-child{width:1.2em;flex:none;text-align:center}
+li.pass>span:first-child{color:#5ec98a}
+li.fail{background:#2a1c1c}
+li.fail>span:first-child{color:#ff8080}
+li.fail>span:last-child{color:#ffbcbc}
+/* the reason a test failed: its own row under the test, not a flex cell in it */
+.grp li.why{display:block;padding:2px 0 4px 2.9em;color:#e08a8a;
+  font:11.5px ui-monospace,Consolas,monospace;white-space:pre-wrap}
+.bad{color:#ff9b9b}
